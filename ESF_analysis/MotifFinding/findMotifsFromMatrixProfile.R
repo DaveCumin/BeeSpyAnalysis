@@ -159,7 +159,7 @@ findMotifs <- function(MP, data, w_size, n_motifs = 3, n_neighbors = 10, radius 
 
 
 
-
+## plot them
 for(m in seq_along(motifs$motif_idx)){
   cat(m, "\n")
   for(ml in seq_along(motifs$motif_idx[[m]]) ){

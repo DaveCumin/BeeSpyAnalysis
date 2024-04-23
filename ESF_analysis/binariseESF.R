@@ -3,11 +3,11 @@
 ### We assume that the spectrogramData has the frequency components in the first row, and
 ### the first column is the time data.
 ### ARGUMENTS
-### spectrogramData :- the data from the csv file, as a matrix
+### spectrogramData :- the data from the csv file, as a numeric matrix
 ### threshold       :- the threshold value to binarise the power (default at 90th centile of the entire dataset)
 ### freqSelect      :- vector of indicies for the frequencies to keep
 ### freqSelect      :- a min and max value of the frequency components to keep
-binariseESF <- function(spectrogramData, threshold = NULL, freqSelect = NULL){
+binariseESF <- function(spectrogramData, freqSelect = NULL, threshold = NULL){
  
   
   ### parse the frequencies and limit if required
@@ -18,10 +18,7 @@ binariseESF <- function(spectrogramData, threshold = NULL, freqSelect = NULL){
                                         ]
     
   }
-  
-  ## convert to numeric
-  mode(spectrogramData) = "numeric"
-  
+
   ## work out the threshold if required
   if(is.null(threshold)){
     threshold = quantile(spectrogramData[,seq(2,ncol(spectrogramData))], 0.9)
@@ -34,8 +31,42 @@ binariseESF <- function(spectrogramData, threshold = NULL, freqSelect = NULL){
 }
 
 
+# 
+# ### test the code
+# out = list()
+# for(i in seq(6)){
+#   tic("read in data and convert to matrix")
+#   test = read.csv(file.path(paste0("~/Documents/Circadian/BeeSpy/Exemplar Data_30minInclVideo/ExemplarDataChannel",i-1,".csv")))  
+#   test = as.matrix(test)  
+#   mode(test) = "numeric"
+#   toc()
+#   
+#   tic("binarise")
+#   out[[i]] = binariseESF(test, c(0, 750))
+#   toc()
+# }
+# 
+# 
+# ## plot each channel
+# par(mfcol=c(3,1))
+# for(i in seq(6)){
+#   image(
+#     x = seq(dim(out[[i]])[1]/100)*0.2,
+#     y = seq(5,750,by=5),
+#     out[[i]][], 
+#     main=paste0("channel", i-1),
+#     xlab="time",
+#     ylab="freq"
+#     )
+# }
+# ## plot the difference between all 'good' signals
+# par(mfcol=c(1,1))
+# image(
+#     x = seq(dim(out[[i]])[1])*0.2,
+#     y = seq(5,750,by=5),
+#     xor(out[[6]], xor(out[[4]], xor(out[[3]], xor(out[[1]], out[[2]]) ))), 
+#     main=paste0("channel", i-1),
+#     xlab="time",
+#     ylab="freq"
+# )
 
-### test the code
-test = read.csv(file.path("~/Documents/Circadian/BeeSpy/Exemplar Data_30minInclVideo/ExemplarDataChannel0.csv"))
-test = as.matrix(test)
-out = binariseESF(test)
